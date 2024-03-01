@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+
+  chamilo-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: chamilo
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./.docker/db/init-scripts:/docker-entrypoint-initdb.d 
+    ports:
+      - "3306:3306"
+    restart: unless-stopped 
+
+  chamilo-app:
+    image: chamilo
+    depends_on:
+      - chamilo-db
+    volumes:
+      - ./chamilo:/var/www/html/chamilo
+    ports:
+      - "80:80"
+
+volumes:
+  db-data:
